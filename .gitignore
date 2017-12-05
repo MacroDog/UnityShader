@@ -1,0 +1,12 @@
+/Debug
+/Temp
+/Library
+/.vs
+/*.csproj
+/*.unityproj
+/*.sln
+/*.suo
+/*.user
+/*.userprefs
+/*.pidb
+/*.booproj
