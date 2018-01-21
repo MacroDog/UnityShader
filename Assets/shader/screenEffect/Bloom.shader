@@ -37,20 +37,23 @@ Shader "Custom/Bloom" {
 	 		o.uv.xy = v.texcoord;
 	 		o.uv.zw = v.texcoord;
 	 		#if UNITY_UV_STARTS_AT_TOP
-	 		if (_MainTex_TexelSize.y<0.0)
+	 		if (_MainTex_TexelSize.y < 0.0)
 	 			o.uv.w = 1.0 - o.uv.w;
 	 		#endif
 
 	 		return o;
 	 	}
+
 	 	fixed Luminance(fixed4 color){
 	 		return 0.2125*color.r + 0.7154*color.g + 0.0721*color.b;
 	 	}
+
 	 	fixed4 fragExtractBright(v2f i):SV_Target{
 	 		fixed4 c = tex2D(_MainTex,i.uv);
 	 		fixed val = clamp(Luminance(c) - _LuminanceThreshold,0.0,1.0);
 	 		return c*val;
 	 	}
+
 	 	fixed4 fragBloom(v2fBloom i):SV_Target{
 	 		return tex2D(_MainTex,i.uv.xy) + tex2D(_Bloom,i.uv.zw);
 	 	} 
