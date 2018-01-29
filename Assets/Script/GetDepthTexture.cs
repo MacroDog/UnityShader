@@ -16,6 +16,6 @@ public class GetDepthTexture : MonoBehaviour {
 	}
 
     void OnRenderImage(RenderTexture scourse ,RenderTexture destination) {
-        cm.depthTextureMode
+       
     }
 }

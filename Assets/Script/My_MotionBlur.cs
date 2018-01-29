@@ -27,7 +27,7 @@ public class My_MotionBlur : PostEffectsBase {
                DestroyImmediate(accumulationTexture);
                 accumulationTexture = new RenderTexture(src.width,src.height,0);
                 accumulationTexture.hideFlags = HideFlags.HideAndDontSave;
-                Graphics.Blit(src,accumulationTexture);
+                //Graphics.Blit(src,accumulationTexture);
             }
             accumulationTexture.MarkRestoreExpected();
             material.SetFloat("_BlurAmount",blurAmount);
