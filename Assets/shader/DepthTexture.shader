@@ -1,0 +1,25 @@
+﻿Shader "Custom/DepthTexture" {
+	Properties {
+		_Color ("Color", Color) = (1,1,1,1)
+		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_Glossiness ("Smoothness", Range(0,1)) = 0.5
+		_Metallic ("Metallic", Range(0,1)) = 0.0
+	}
+	SubShader {
+		Tags { "RenderType"="Opaque" }
+		LOD 200
+
+		CGPROGRAM
+		#include"UnityCG.cginc"
+
+		struct vtf{
+
+		}
+		fixed4 vert(appdata_img a){
+			float4 uv =
+		}
+
+		ENDCG
+	}
+	FallBack "Diffuse"
+}
