@@ -1,5 +1,3 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
 Shader "Custom/RenderDepth" {
     SubShader {
         Tags { "RenderType"="Opaque" }
@@ -9,23 +7,25 @@ Shader "Custom/RenderDepth" {
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
-
+            sampler2D _CameraDepthTexture;
             struct v2f {
                 float4 pos : SV_POSITION;
-                float2 depth : TEXCOORD0;
+                float2 uv : TEXCOORD0;
             };
 
             v2f vert (appdata_base v) {
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
-                UNITY_TRANSFER_DEPTH(o.depth);
+                o.uv = ComputeScreenPos(o.pos);
                 return o;
             }
 
             half4 frag(v2f i) : SV_Target {
-                UNITY_OUTPUT_DEPTH(i.depth);
+                float d = UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture,i.uv));
+                return (d,1,1,1);
             }
             ENDCG
         }
     }
+    FallBack ""
 }

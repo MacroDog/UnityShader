@@ -9,12 +9,6 @@ public class GetDepthTexture : MonoBehaviour {
 	    Camera.main.depthTextureMode |= DepthTextureMode.DepthNormals;
 	    Camera.main.depthTextureMode |= DepthTextureMode.Depth;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     void OnRenderImage(RenderTexture scourse ,RenderTexture destination) {
        
     }
