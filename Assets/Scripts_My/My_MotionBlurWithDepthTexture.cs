@@ -5,11 +5,11 @@ using UnityEngine;
 public class My_MotionBlurWithDepthTexture : My_PostEffectsBase {
 
     public Shader MotionBlur;
-    public Material MotionBlurMaterial;
+    private Material MotionBlurMaterial = null;
     public Material material {
         get {
-            Material temp = CheckShaderAndCreateMaterial(MotionBlur,MotionBlurMaterial);
-            return material;
+            MotionBlurMaterial = CheckShaderAndCreateMaterial(MotionBlur,MotionBlurMaterial);
+            return MotionBlurMaterial;
         }
     }
 
@@ -17,7 +17,7 @@ public class My_MotionBlurWithDepthTexture : My_PostEffectsBase {
     public float blurSize = 0.5f;
 
     private Matrix4x4 previousMatrix;
-    public Camera Camera {
+    public Camera _Camera {
         get {
             if (!camera) {
                 camera = GetComponent<Camera>();
@@ -32,18 +32,20 @@ public class My_MotionBlurWithDepthTexture : My_PostEffectsBase {
     private Camera camera = null;
 
     void OnEnable() {
-        camera.depthTextureMode |= DepthTextureMode.DepthNormals;
-        camera.depthTextureMode |= DepthTextureMode.Depth;
+        _Camera.depthTextureMode |= DepthTextureMode.Depth;
+
+        previousMatrix = _Camera.projectionMatrix * _Camera.worldToCameraMatrix;
     }
     void OnRenderImage(RenderTexture sources, RenderTexture destination) {
-        if (!material) {
+        if (material) {
             material.SetFloat("_BlurSize",blurSize);
             material.SetMatrix("_PreviousViewProjectionMatrix", previousMatrix);
-            Matrix4x4 currentViewProjectMatrix = camera.projectionMatrix * camera.worldToCameraMatrix;
+            Matrix4x4 currentViewProjectMatrix = _Camera.projectionMatrix * _Camera.worldToCameraMatrix;
             Matrix4x4 currentViewProjectInverseMatrix = currentViewProjectMatrix.inverse;
-            material.SetMatrix("_currentViewProjectInverseMatrix",currentViewProjectInverseMatrix);
-            Graphics.Blit(sources,destination,material);
+            material.SetMatrix("_CurrentViewProjectionInverseMatrix", currentViewProjectInverseMatrix);
             previousMatrix = currentViewProjectMatrix;
+            Graphics.Blit(sources,destination,material);
+            
         }
         else {
             Graphics.Blit(sources,destination,material);
