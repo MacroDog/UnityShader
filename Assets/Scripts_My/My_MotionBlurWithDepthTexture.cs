@@ -48,7 +48,7 @@ public class My_MotionBlurWithDepthTexture : My_PostEffectsBase {
             
         }
         else {
-            Graphics.Blit(sources,destination,material);
+            Graphics.Blit(sources,destination);
         }
     }
 
