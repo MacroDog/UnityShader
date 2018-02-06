@@ -15,6 +15,7 @@
 			float _FogDenisty;
 			float _FogStart;
 			float _FogEnd;
+			float4x4 _FrusumCorrnesr;
 			struct v2f{
 				float4 pos : SV_POSITION;
 				float2 uv : TEXCOORD0;
@@ -45,10 +46,8 @@
 				o.interpolatedRay = _FrusumCorrnesr[index];
 				return o;
 			}
-
 			float4 Frag(v2f i):SV_Target{
 				float linearDepth =LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth)) ;
-				//float d = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth);
 				float3 worldPos =_WorldSpaceCameraPos + i.interpolatedRay.xyz*linearDepth;
 				float fogDenisty = (_FogEnd-worldPos.y)/(_FogEnd-_FogStart);
 				fogDenisty = saturate(fogDenisty*_FogDenisty);
