@@ -5,9 +5,11 @@
 		_MainTex ("Texture", 2D) = "white" {}
 		_Notice ("Notice",2D) = "white"{}
 		_Color("Color",Color) = (1,1,1,1)
-		_Amount("Amount",Range(0,1)) = 0.1  //溶解度
-		_DissSize("DissSize",Range(0,1)) = 0.5
-		_DissColor("DissColor",Color) = (1,1,1,1)
+		_DissolveThreshold("DissolveThreshold",Range(0,1)) = 0.1  //溶解度
+		_DissolveColor("DissolveColor",Color) = (1,1,1,1)
+		_ColorFactor("ColorFactor", Range(0,1)) = 0.7
+		_DissEdgeColor("DissEdgeColor",Color) = (1,1,1,1)
+		_DissolveEdge("DissolveEdge", Range(0,1)) = 0.8
 	}
 	SubShader
 	{
@@ -40,11 +42,12 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			sampler2D _Notice;
-			float _Amount;
-			float _DissSize;
-			float4 _DissColor;
+			float _DissolveThreshold;
+			float4 _DissolveColor;
+			float4 _DissEdgeColor;
 			float4 _Color;
-
+			float _ColorFactor;
+			float _DissolveEdge;
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -55,17 +58,22 @@
 
 			fixed4 frag (v2f i) : SV_Target
 			{
+				fixed4 dissolveValue = tex2D(_Notice,i.uv);
+				if(dissolveValue.r < _DissolveThreshold)
+				{
+					discard;
+				}
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
 				col.rgb*=_Color.rgb;
-				fixed ClipTex = tex2D(_Notice,i.uv).r;
-				fixed SrcAlpha = ClipTex + _Amount;
-				if(SrcAlpha > 1){
-					discard;
-				}
-				SrcAlpha = saturate(SrcAlpha);
-				fixed3 color = lerp(col.rgb,_DissColor.rgb,SrcAlpha);
-				return fixed4(color,1-SrcAlpha);
+				fixed4 ClipTex = tex2D(_Notice,i.uv);
+				float percentage = _DissolveThreshold/dissolveValue.r;
+				float lerpEdge = sign(percentage - _ColorFactor - _DissolveEdge);
+				 fixed3 edgeColor = lerp(_DissEdgeColor.rgb, _DissolveColor.rgb, saturate(lerpEdge));
+				 float lerpOut = sign(percentage - _ColorFactor);
+         //最终颜色在原颜色和上一步计算的颜色之间差值（其实经过saturate（sign（..））的lerpOut应该只能是0或1）
+         fixed3 colorOut = lerp(col, edgeColor, saturate(lerpOut));
+				return fixed4(colorOut,1);
 			}
 			ENDCG
 		}
