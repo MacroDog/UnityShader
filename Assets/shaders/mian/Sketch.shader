@@ -1,6 +1,7 @@
 ﻿Shader "Custom/sketch" {
 	Properties {
 		_MainTex("Base(RGB)",2D ) = "white"{}
+		_Color("Color",COLOR) = (1,1,1,1)
 		_PencilTex0("Pencil Texture0",2D ) = "white"{}
 		_PencilTex1("Pencil Texture1",2D ) = "white"{}
 		_PencilTex2("Pencil Texture2",2D ) = "white"{}
@@ -35,6 +36,7 @@
 			sampler2D _PencilTex4;
 			sampler2D _PencilTex5;
 			sampler2D _PeperTex;
+			float4 _Color;
 			float _TileFactor;
 			float _TileFactor2;
 			struct a2v
@@ -50,9 +52,7 @@
 				float4 scrPos:TEXCOORD0 ;
 				float3 worldNormal:TEXCOORD1 ;
 				float3 worldLightDir:TEXCOORD2; 
-				float3 worldPos:TEXCOORD3;
-				SHADOW_COORDS(4);
-				
+				float3 worldPos:TEXCOORD3;				
 			};
 			v2f vert(a2v v){
 				v2f o;
@@ -67,7 +67,7 @@
 			float4 frag(v2f i):COLOR{
 				fixed3 worldNormal = normalize(i.worldNormal);
 				fixed3 worldLightDir = normalize(i.worldLightDir);
-				fixed3 scrPos = i.scrPos.xy/i.scrPos.w*_TileFactor;
+				fixed3 scrPos = i.scrPos.xyz/i.scrPos.w*_TileFactor;
 				UNITY_LIGHT_ATTENUATION(atten,i,i.worldPos);
 				fixed diff = (dot(worldNormal,worldLightDir)*0.5+0.5)*atten*6;
 				fixed3 fragColor;
@@ -93,10 +93,11 @@
 					fragColor = tex2D(_PencilTex5,scrPos).rgb;
 				}
 				fragColor *=_Color.rgb*_LightColor0.rgb;
-				retun fixed4(fragColor,1.0);
+				return fixed4(fragColor,1.0);
 			}
 			ENDCG
 		}
 	}
-	FallBack "Diffuse"
+	FallBack ""
+
 }

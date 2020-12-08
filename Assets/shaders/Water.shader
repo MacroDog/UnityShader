@@ -28,32 +28,32 @@ Shader "Custom/Water" {
 			#pragma vertex vert
 			#pragma fragment frag
 			struct a2v
-			 {
-			 	float4 vertex:POSITION;
-			 	float4 texcoord:TEXCOORD0; 
-			 }; 
-			 struct v2f
-			 {
-			 	float4 pos:SV_POSITION;
-			 	float2 uv:TEXCOORD0; 
-			 };
-			 v2f vert(a2v v){
-			 	v2f o;
-			 	float4 offset;
-			 	offset.yzw = float3(0.0, 0.0, 0.0);
+			{
+				float4 vertex:POSITION;
+				float4 texcoord:TEXCOORD0; 
+			}; 
+			struct v2f
+			{
+				float4 pos:SV_POSITION;
+			float2 uv:TEXCOORD0; 
+			};
+			v2f vert(a2v v){
+				v2f o;
+				float4 offset;
+				offset.yzw = float3(0.0, 0.0, 0.0);
 				offset.x = sin(_Frequency * _Time.y + v.vertex.x * _InvWaveLength + v.vertex.y * _InvWaveLength + v.vertex.z * _InvWaveLength) * _Magnitude;
-			 	o.pos = UnityObjectToClipPos(v.vertex + offset);
-			 	o.uv = v.texcoord+_MainTex_ST.xy+_MainTex_ST.zw;
-			 	o.uv +=float2(0.0,_Time.y*_Speed);
-			 	return o;
-			 }
-			 fixed4 frag(v2f i):COLOR{
-			 	fixed4 c = tex2D(_MainTex,i.uv);
+				o.pos = UnityObjectToClipPos(v.vertex + offset);
+				o.uv = v.texcoord+_MainTex_ST.xy+_MainTex_ST.zw;
+				o.uv +=float2(0.0,_Time.y*_Speed);
+				return o;
+			}
+			fixed4 frag(v2f i):COLOR{
+				fixed4 c = tex2D(_MainTex,i.uv);
 			 	c.rgb *= _Color.rgb;
-			 	return c;
-			 }
+				return c;
+			}
 			ENDCG
-			 
+			
 		}
 		
 	}
